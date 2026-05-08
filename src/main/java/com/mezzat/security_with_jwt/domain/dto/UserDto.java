@@ -1,6 +1,6 @@
-package com.mezzat.security_with_jwt.data.entity;
+package com.mezzat.security_with_jwt.domain.dto;
 
-import jakarta.persistence.*;
+import com.mezzat.security_with_jwt.data.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -11,15 +11,11 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Entity
 @NoArgsConstructor
 @Setter
 @Getter
 @AllArgsConstructor
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class UserDto {
 
     @Email(message = "Please provide a valid email")
     @NotEmpty(message = "Please provide an email")
@@ -34,8 +30,5 @@ public class User {
     @NotEmpty(message = "Please provide a password")
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Collection<Role> roles = new ArrayList<>();
-
+    private Collection<RoleDto> roles = new ArrayList<>();
 }

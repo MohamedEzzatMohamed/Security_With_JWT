@@ -10,11 +10,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 public class JwtUtils {
 
     private static final String SECRET = "secret";
-    private static final Algorithm ALGORITHM = Algorithm.HMAC256(SECRET.getBytes());
+    private static final Algorithm ALGORITHM =
+            Algorithm.HMAC256(SECRET.getBytes());
 
     public static DecodedJWT getDecodedJwt(String token) {
         JWTVerifier verifier = JWT.require(ALGORITHM).build();
@@ -22,8 +24,18 @@ public class JwtUtils {
     }
 
     public static Collection<GrantedAuthority> getAuthorities(String[] roles) {
+
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        Arrays.stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
+
+        if (roles == null || roles.length == 0) {
+            return authorities;
+        }
+
+        Arrays.stream(roles)
+                .filter(Objects::nonNull)
+                .forEach(role ->
+                        authorities.add(new SimpleGrantedAuthority(role)));
+
         return authorities;
     }
 

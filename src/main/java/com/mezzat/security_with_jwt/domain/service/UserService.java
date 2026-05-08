@@ -1,20 +1,20 @@
 package com.mezzat.security_with_jwt.domain.service;
 
-import com.mezzat.security_with_jwt.data.entity.Role;
-import com.mezzat.security_with_jwt.data.entity.User;
+import com.mezzat.security_with_jwt.domain.dto.RoleDto;
+import com.mezzat.security_with_jwt.domain.dto.UserDto;
 
 import java.util.List;
 
 public interface UserService {
 
-    User saveUser(User user);
+    UserDto saveUser(UserDto userDto);
 
-    Role saveRole(Role role);
+    RoleDto saveRole(RoleDto roleDto);
 
     void addRoleToUser(String userEmail, String roleName);
 
-    User getUser(String userEmail);
+    UserDto getUser(String userEmail);
 
-    List<User> getUsers();
+    List<UserDto> getUsers();
 
 }

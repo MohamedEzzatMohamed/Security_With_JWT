@@ -28,7 +28,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable).sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login/**", "/api/token/refresh").permitAll()
+                        .requestMatchers("/api/login/**", "/api/token/refresh", "/api/user/save").permitAll()
                         .requestMatchers("/api/users").hasAnyAuthority("ROLE_USER")
                         .requestMatchers("/api/user/**").hasAnyAuthority("ROLE_MANAGER")
                         .requestMatchers("/api/role/**").hasAnyAuthority("ROLE_MANAGER")

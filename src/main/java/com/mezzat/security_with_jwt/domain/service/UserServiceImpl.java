@@ -1,11 +1,13 @@
-package com.mezzat.security_with_jwt.data.service;
+package com.mezzat.security_with_jwt.domain.service;
 
 import com.mezzat.security_with_jwt.data.entity.Role;
 import com.mezzat.security_with_jwt.data.entity.User;
 import com.mezzat.security_with_jwt.data.repository.RoleRepository;
 import com.mezzat.security_with_jwt.data.repository.UserRepository;
-import com.mezzat.security_with_jwt.domain.service.UserService;
-import jakarta.transaction.Transactional;
+import com.mezzat.security_with_jwt.domain.dto.RoleDto;
+import com.mezzat.security_with_jwt.domain.dto.UserDto;
+import com.mezzat.security_with_jwt.domain.mapper.RoleMapper;
+import com.mezzat.security_with_jwt.domain.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,11 +16,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,51 +31,55 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final UserMapper userMapper;
+    private final RoleMapper roleMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public User saveUser(User user) {
-        log.info("Saving new user {} to the database", user.getFirstName());
+    public UserDto saveUser(UserDto userDto) {
+        log.info("Saving new user {} to the database", userDto.getFirstName());
+        User user = userMapper.toEntity(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
-    public Role saveRole(Role role) {
-        log.info("Saving new role {} to the database", role.getName());
-        return roleRepository.save(role);
+    public RoleDto saveRole(RoleDto roleDto) {
+        log.info("Saving new role {} to the database", roleDto.getName());
+        Role role = roleMapper.toEntity(roleDto);
+        return roleMapper.toDto(roleRepository.save(role));
     }
 
     @Override
     public void addRoleToUser(String userEmail, String roleName) {
         log.info("Adding role {} to user {}", roleName, userEmail);
-        User user = userRepository.findByEmail(userEmail);
-        Role role = roleRepository.findByName(roleName);
-
-        if (user == null) {
+        if (userEmail == null) {
             throw new RuntimeException("User not found");
         }
 
-        if (role == null) {
+        if (roleName == null) {
             throw new RuntimeException("Role not found");
         }
-
+        User user = userRepository.findByEmail(userEmail);
+        Role role = roleRepository.findByName(roleName);
         user.getRoles().add(role);
-
-        userRepository.save(user);
     }
 
     @Override
-    public User getUser(String userEmail) {
+    public UserDto getUser(String userEmail) {
         log.info("fetching user {}", userEmail);
-        return userRepository.findByEmail(userEmail);
+        return userMapper.toDto(userRepository.findByEmail(userEmail));
     }
 
     @Override
-    public List<User> getUsers() {
+    public List<UserDto> getUsers() {
         log.info("fetching all users");
-        return userRepository.findAll();
+
+        return userRepository.findAll().stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
     }
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
