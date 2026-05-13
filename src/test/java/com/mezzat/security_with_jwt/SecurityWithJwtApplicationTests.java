@@ -1,6 +1,5 @@
 package com.mezzat.security_with_jwt;
 
-import com.mezzat.security_with_jwt.data.entity.User;
 import com.mezzat.security_with_jwt.data.repository.RoleRepository;
 import com.mezzat.security_with_jwt.data.repository.UserRepository;
 import com.mezzat.security_with_jwt.domain.dto.RoleDto;
@@ -63,8 +62,8 @@ class SecurityWithJwtApplicationTests {
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
-        accessToken = new ObjectMapper().readTree(response).get("access_token").asText();
-        refreshToken = new ObjectMapper().readTree(response).get("refresh_token").asText();
+        accessToken = new ObjectMapper().readTree(response).get("access_token").asString();
+        refreshToken = new ObjectMapper().readTree(response).get("refresh_token").asString();
         log.info("Access token: {}", accessToken);
         log.info("Refresh token: {}", refreshToken);
     }

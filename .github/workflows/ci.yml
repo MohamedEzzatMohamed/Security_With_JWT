@@ -1,0 +1,50 @@
+# GitHub Actions workflow for building and testing the Spring Boot application
+
+name: Java CI with Maven
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" and "dev" branches
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # 1. Checks out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Sets up JDK 17 for the build
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3. Caches Maven dependencies to speed up subsequent builds
+      - name: 'Cache Maven packages'
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      # 4. Builds the project and runs tests using Maven
+      - name: Build and test with Maven
+        run: mvn -B clean install
+
+# To use this file:
+# 1. Create a `.github/workflows` directory in the root of your project.
+# 2. Save this file as `ci.yml` (or any other .yml name) inside that directory.
+# 3. Commit and push the file to your GitHub repository.
+# GitHub will automatically detect and start using this workflow.
