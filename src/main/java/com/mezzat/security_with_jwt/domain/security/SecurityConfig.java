@@ -2,6 +2,7 @@ package com.mezzat.security_with_jwt.domain.security;
 
 import com.mezzat.security_with_jwt.domain.filter.CustomAuthenticationFilter;
 import com.mezzat.security_with_jwt.domain.filter.CustomAuthorizationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     @Bean
@@ -28,10 +30,10 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable).sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login/**", "/api/token/refresh", "/api/user/save").permitAll()
-                        .requestMatchers("/api/users").hasAnyAuthority("ROLE_USER")
-                        .requestMatchers("/api/user/**").hasAnyAuthority("ROLE_MANAGER")
-                        .requestMatchers("/api/role/**").hasAnyAuthority("ROLE_MANAGER")
+                        .requestMatchers("/api/login/**", "/api/token/refresh").permitAll()
+                        .requestMatchers("/api/user/save").permitAll() // Allow user creation
+                        .requestMatchers("/api/users").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers("/api/user/**", "/api/role/**").hasAnyAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)
@@ -58,12 +60,11 @@ public class SecurityConfig {
         return new CustomAuthorizationFilter();
     }
 
-
     @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder);
+        authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
 

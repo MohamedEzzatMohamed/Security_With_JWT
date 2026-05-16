@@ -1,18 +1,18 @@
 package com.mezzat.security_with_jwt.data.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Set;
 
 @Entity
 @NoArgsConstructor
 @Getter
 @Setter
 @AllArgsConstructor
+@Table(name = "roles")
 public class Role implements GrantedAuthority {
 
     @Id
