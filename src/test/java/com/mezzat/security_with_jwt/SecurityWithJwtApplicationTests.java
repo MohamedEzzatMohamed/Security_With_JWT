@@ -1,5 +1,6 @@
 package com.mezzat.security_with_jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mezzat.security_with_jwt.data.repository.RoleRepository;
 import com.mezzat.security_with_jwt.data.repository.UserRepository;
 import com.mezzat.security_with_jwt.domain.dto.RoleDto;
@@ -9,12 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 
@@ -62,8 +62,8 @@ class SecurityWithJwtApplicationTests {
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
-        accessToken = new ObjectMapper().readTree(response).get("access_token").asString();
-        refreshToken = new ObjectMapper().readTree(response).get("refresh_token").asString();
+        accessToken = new ObjectMapper().readTree(response).get("access_token").asText();
+        refreshToken = new ObjectMapper().readTree(response).get("refresh_token").asText();
         log.info("Access token: {}", accessToken);
         log.info("Refresh token: {}", refreshToken);
     }

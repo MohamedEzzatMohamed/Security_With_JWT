@@ -2,7 +2,7 @@ package com.mezzat.security_with_jwt.presentation.api;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.mezzat.security_with_jwt.data.entity.Role;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mezzat.security_with_jwt.data.entity.RoleToUserForm;
 import com.mezzat.security_with_jwt.domain.common.JwtUtils;
 import com.mezzat.security_with_jwt.domain.dto.RoleDto;
@@ -17,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.net.URI;
